@@ -9,6 +9,10 @@ ARG OPENSSH_RELEASE
 LABEL build_version="Linuxserver.io version:- ${VERSION} Build-date:- ${BUILD_DATE}"
 LABEL maintainer="aptalca"
 
+# add syslog for internal-sftp
+ADD https://github.com/just-containers/s6-overlay/releases/download/v3.1.6.2/syslogd-overlay-noarch.tar.xz /tmp
+RUN tar -C / -Jxpf /tmp/syslogd-overlay-noarch.tar.xz
+
 RUN \
   echo "**** install runtime packages ****" && \
   apk add --no-cache --upgrade \
