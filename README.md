@@ -120,6 +120,9 @@ services:
       - USER_PASSWORD_FILE=/path/to/file #optional
       - USER_NAME=linuxserver.io #optional
       - LOG_STDOUT= #optional
+      - USERS=one,two,three #optional
+      - PUBLIC_KEY_one=publickeyone #optional
+      - PUBLIC_KEY_two=publickeytwo #optional
     volumes:
       - /path/to/appdata/config:/config
     ports:
@@ -146,6 +149,9 @@ docker run -d \
   -e USER_PASSWORD_FILE=/path/to/file `#optional` \
   -e USER_NAME=linuxserver.io `#optional` \
   -e LOG_STDOUT= `#optional` \
+  -e USERS=one,two,three `#optional` \
+  -e PUBLIC_KEY_one=publickeyone `#optional` \
+  -e PUBLIC_KEY_two=publickeytwo `#optional` \
   -p 2222:2222 \
   -v /path/to/appdata/config:/config \
   --restart unless-stopped \
@@ -173,6 +179,9 @@ Containers are configured using parameters passed at runtime (such as those abov
 | `-e USER_PASSWORD_FILE=/path/to/file` | Optionally specify a file that contains the password. This setting supersedes the `USER_PASSWORD` option (works with docker secrets). |
 | `-e USER_NAME=linuxserver.io` | Optionally specify a user name (Default:`linuxserver.io`) |
 | `-e LOG_STDOUT=` | Set to `true` to log to stdout instead of file. |
+| `-e USERS=one,two,three` | Optionally specify additional users |
+| `-e PUBLIC_KEY_one=` | Optional ssh public key for additional user |
+| `-e PUBLIC_KEY_two=` | Optional ssh public key for additional user |
 | `-v /config` | Contains all relevant configuration files. |
 
 ## Environment variables from files (Docker secrets)
