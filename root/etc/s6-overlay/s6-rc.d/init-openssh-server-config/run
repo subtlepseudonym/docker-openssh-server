@@ -70,6 +70,10 @@ fi
 UMASK=${UMASK:-022}
 sed -i "s|/usr/lib/ssh/sftp-server$|/usr/lib/ssh/sftp-server -u ${UMASK}|g" /etc/ssh/sshd_config
 
+# set sshd syslog facility and internal-sftp options
+sed -i '/^#SyslogFacility/c\SyslogFacility USER' /etc/ssh/sshd_config
+sed -i '/ForceCommand/c\ForceCommand internal-sftp -d /share -l INFO -f USER' /etc/ssh/sshd_config
+
 # set key auth in file
 if [[ ! -f /config/.ssh/authorized_keys ]]; then
     touch /config/.ssh/authorized_keys
@@ -107,6 +111,16 @@ if [[ -d "$PUBLIC_KEY_DIR" ]]; then
         fi
     done
 fi
+
+oldifs="${IFS}"
+IFS=,
+for user in ${USERS}; do
+	sudo -u "${user}" mkdir -m 700 -p "/home/${user}/.ssh"
+	pubkey="PUBLIC_KEY_${user}"
+	echo "${!pubkey}" | install -m 644 -o "${user}" -g "${user}" /dev/stdin "/home/${user}/.ssh/authorized_keys"
+	echo "Added public key ${!pubkey:0:8} for ${user}"
+done
+IFS="${oldifs}"
 
 # back up old log files processed by logrotate
 if [[ -f /config/logs/openssh/openssh.log ]]; then

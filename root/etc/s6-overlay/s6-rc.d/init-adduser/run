@@ -51,3 +51,25 @@ fi
 lsiown "${USER_NAME}":"${USER_NAME}" /app
 lsiown "${USER_NAME}":"${USER_NAME}" /config
 lsiown "${USER_NAME}":"${USER_NAME}" /defaults
+
+useradd --no-create-home --non-unique --uid "${PUID}" --gid "${PGID}" syslog
+useradd --no-create-home --non-unique --uid "${PUID}" --gid "${PGID}" sysllog
+chown --recursive "${PUID}":"${PGID}" /var/log/syslogd
+
+oldifs="${IFS}"
+IFS=,
+count=0
+for user in ${USERS}; do
+	count=$(( ${count} + 1 ))
+	uid="$(( ${PUID} + ${count} ))"
+	gid="$(( ${PGID} + ${count} ))"
+	groupadd --gid "${gid}" "${user}"
+	useradd  --create-home \
+		--uid "${uid}" \
+		--gid "${gid}" \
+		--groups "${PGID}" \
+		"${user}"
+	usermod -p '*' "${user}"
+	chown --recursive "${user}":"${user}" "/home/${user}"
+done
+IFS="${oldifs}"
